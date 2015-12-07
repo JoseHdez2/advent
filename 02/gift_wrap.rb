@@ -11,9 +11,10 @@ input.split("\n").each do |gift|
   l = gift[0].to_i
   w = gift[1].to_i
   h = gift[2].to_i
-  smallest = [l,w,h].min
+  lw = l * w; wh = w * h; hl = h * l
+  smallest = [lw,wh,hl].min
 
-  gift_paper = 2*l*w + 2*w*h + 2*h*l + smallest
+  gift_paper = 2*lw + 2*wh + 2*hl + smallest
 
   total_paper += gift_paper
 end
