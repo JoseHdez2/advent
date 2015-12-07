@@ -5,7 +5,7 @@ Dir.chdir(Dir.getwd.split("/advent")[0].concat("/advent/02"))
 input = File.open("./input.txt", "rb").read
 puts "input:#{input}"
 
-total_paper = 0
+total_paper = 0; total_ribbon = 0
 input.split("\n").each do |gift|
   gift = gift.split('x')
   l = gift[0].to_i
@@ -16,6 +16,10 @@ input.split("\n").each do |gift|
 
   gift_paper = 2*lw + 2*wh + 2*hl + smallest
 
+  gift_ribbon = smallest * 2 + l * w * h
+
   total_paper += gift_paper
+  total_ribbon += gift_ribbon
 end
 puts "The elves need #{total_paper} square feet of wrapping paper."
+puts "The elves need #{total_ribbon} feet of ribbon."
