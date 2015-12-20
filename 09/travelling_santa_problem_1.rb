@@ -2,11 +2,9 @@
 Dir.chdir(Dir.getwd.split("/advent")[0].concat("/advent/09"))
 
 # Read input
-input = File.open("./example.txt", "rb").read
+input = File.open("./input.txt", "rb").read
 
 # ---
-
-require 'set'
 
 # Read explicit distances into hash.
 map = Hash.new(Float::INFINITY)
@@ -17,8 +15,9 @@ input.each_line do |line|
 end
 
 # Induce unique locations
-locations = Set.new []
-map.keys.each { |k| k.each { |l| locations.add(l) } }
+locations = []
+map.keys.each { |k| k.each { |l| locations.push(l) } }
+locations.uniq! # No repeats!
 puts locations
 
 # Distances hash, to contain explicit and implicit distances
@@ -32,15 +31,20 @@ locations.each { |l| distances[[l,l]] = 0 }
 def neighbors(node_name, dists)
   neighs = []
   dists.keys.each do |k|
-    neighs.push(k) if k.contains(node_name)
+    neighs.push(k) if k.include?(node_name)
   end
-  return neighs.flatten.delete(node_name)
+  # return neighs if neighs == []
+  neighs.flatten!.delete(node_name)
+  puts "returning neighs: #{neighs}"
+  return neighs
 end
 
 # Get implicit and update explicit distances using Dijkstra
 locations.each do |start_node|
+  puts "start node = #{start_node}"
   locations.each do |end_node|
-    unvisited = locations
+    puts "end node = #{end_node}"
+    unvisited = locations.map { |e| e.dup } # deep copy code I don't understand.
     while(not unvisited.empty?)
       # Evaluated node will be closest unvisited node
       closest_unvisited = nil
@@ -50,9 +54,10 @@ locations.each do |start_node|
       end
       cur_node = closest_unvisited
       neighbors(cur_node, map).each do |n|
-        comparison = [distances[start_node,n]] # Old distance
-        comparison.push(distances[start_node,cur_node]+distances[cur_node,n]) # New distance
-        distances[start_node,n] = comparison.min
+        comparison = []
+        comparison.push(distances[[start_node,n]]) # Old distance
+        comparison.push(distances[[start_node,cur_node]]+distances[[cur_node,n]]) # New distance
+        distances[[start_node,n]] = comparison.min
       end
       unvisited.delete(cur_node)
     end
@@ -63,7 +68,9 @@ end
 
 min_tour_cost = Float::INFINITY
 # Try all possible permutations of locations
+
 locations.permutation do |tour|
+  puts "tour: #{tour}"
   tour_cost = 0
   (1...tour.length).each do |i|
     from = tour[i-1]; to = tour[i]
