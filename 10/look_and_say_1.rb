@@ -7,9 +7,9 @@ input = File.open("./input.txt", "rb").read
 # ---
 input.strip!
 
-(0...40).each do
-  puts input
-  jackpot = [input[0]]
+(0...40).each do |i|
+  puts i # puts input
+  jackpot = [[input[0]]]
   input[1..input.size].split('').each do |d|
     if d == jackpot[-1][0] then jackpot[-1].push(d)
     else jackpot.push([d]) end
@@ -17,9 +17,9 @@ input.strip!
 
   input = ''
   jackpot.each do |cluster|
-    puts "num= #{cluster[0]} times =#{cluster.length}"
-    input += cluster[0] * cluster.length
+    input += cluster.length.to_s + cluster[0]
   end
 end
 
-puts input; puts input.length
+# puts input
+puts input.length
