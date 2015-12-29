@@ -18,4 +18,5 @@ input.split('').each do |move|
   visited[[x,y]] += 1
 end
 
+# visited.each { |k,v| p "key:#{k}, val:#{v}"}
 puts "#{visited.length} houses receive at least one present."
