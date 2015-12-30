@@ -2,8 +2,7 @@
 Dir.chdir(Dir.getwd.split("/advent")[0].concat("/advent/06"))
 
 # Read input
- input = File.open("./input.txt", "rb").read
-#input = File.open("./dummy.txt", "rb").read
+# input = File.open("./input.txt", "rb").read
 
 class LightMatrix
   attr_accessor :matrix
@@ -45,13 +44,13 @@ class LightMatrix
 
   def count_lights
     count = 0
-    (0...@y).each { |y| (0...@x).each { |x| count += 1 } }
+    (0...@y).each { |y| (0...@x).each { |x| count += 1 if @matrix[x][y] == 1 } }
     count
   end
 end
 
-# lights = LightMatrix.new(8,8)
-lights = LightMatrix.new(1000,1000)
+# input = File.open("./dummy.txt", "rb").read; lights = LightMatrix.new(8,8)
+input = File.open("./input.txt", "rb").read; lights = LightMatrix.new(1000,1000)
 
 lights.main_process(input) # puts lights
 
