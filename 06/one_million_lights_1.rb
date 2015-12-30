@@ -28,7 +28,9 @@ lit_lights = 0
 (0..999).each do |x|
   (0..999).each do |y|
     lit_lights += 1 if lights[x][y] == 1
+    if lights[x][y] then p 'o ' else p '. ' end
   end
+  puts
 end
 
 puts "There are #{lit_lights} lit lights."
