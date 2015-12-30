@@ -2,48 +2,57 @@
 Dir.chdir(Dir.getwd.split("/advent")[0].concat("/advent/06"))
 
 # Read input
-# input = File.open("./input.txt", "rb").read
-input = File.open("./dummy.txt", "rb").read
+ input = File.open("./input.txt", "rb").read
+#input = File.open("./dummy.txt", "rb").read
 
-# 1000x1000 matrix of integers
-# lights = Array.new(1000) { Array.new(1000,0) }
-lights = Array.new(8) { Array.new(8,0) }
+class LightMatrix
+  attr_accessor :matrix
+  attr_reader :x, :y
 
-# puts lights
+  def initialize(x, y)
+    @x = x; @y = y
+    @matrix = Array.new(y) { Array.new(x,0) }
+  end
 
-input.each_line do |order|
-  to_do = /^[^\d]+/.match(order)[0].strip
-  from, to = /(\d+,\d+).*?(\d+,\d+)/.match(order).captures
-  from = from.split(',').map { |e| e.to_i }
-  to = to.split(',').map { |e| e.to_i }
+  def main_process(input)
+    input.each_line { |line| read_order(line); do_order }
+  end
 
-  p "from:#{from} to:#{to} to_do:#{to_do}"
+  def read_order(input_line)
+    @to_do = /^[^\d]+/.match(input_line)[0].strip
+    from, to = /(\d+,\d+).*?(\d+,\d+)/.match(input_line).captures
+    @from = from.split(',').map { |e| e.to_i }
+    @to = to.split(',').map { |e| e.to_i }
 
-  (from[0]..to[0]).each do |x|
-    (from[1]..to[1]).each do |y|
-      lights[x][y] = 0 if to_do == "turn off"
-      lights[x][y] = 1 if to_do == "turn on"
+    p "from:#{@from} to:#{@to} to_do:#{@to_do}"
+  end
 
-      # Toggle if instruction is "toggle"
-      if to_do == "toggle"
-        lights[x][y] = 0 if lights[x][y] == 1
-        lights[x][y] = 1 if lights[x][y] == 0
-      end
+  def do_order
+    x1 = @from[0]; x2 = @to[0]; y1 = @from[1]; y2 = @to[1] #aliases
+    case(@to_do)
+    when "toggle"; (x1..x2).each { |x| (y1..y2).each { |y| @matrix[x][y] = (@matrix[x][y] == 0) ? 1 : 0 }}
+    when "turn off"; (x1..x2).each { |x| (y1..y2).each { |y| @matrix[x][y] = 0 }}
+    when "turn on"; (x1..x2).each { |x| (y1..y2).each { |y| @matrix[x][y] = 1 }}
     end
+    # puts self
   end
 
-  puts lights
-end
-
-lit_lights = 0
-# str = ""
-(0..999).each do |x|
-  (0..999).each do |y|
-    lit_lights += 1 if lights[x][y] == 1
-    # if lights[x][y] then str += 'o ' else str += '. ' end
+  def to_s
+    str = ""
+    (0...@y).each { |y| (0...@x).each { |x| str += "#{@matrix[x][y]} " }; str += "\n" }
+    str
   end
-  # str += "\n"
-end
-# puts str
 
-puts "There are #{lit_lights} lit lights."
+  def count_lights
+    count = 0
+    (0...@y).each { |y| (0...@x).each { |x| count += 1 } }
+    count
+  end
+end
+
+# lights = LightMatrix.new(8,8)
+lights = LightMatrix.new(1000,1000)
+
+lights.main_process(input) # puts lights
+
+puts "There are #{lights.count_lights} lit lights."
